@@ -9,8 +9,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
-import { AuthService } from './auth.service';
-import { CreateuserDto } from './dtos/create-user.dto';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user-dto';
 import { UserDto } from './dtos/user.dto';
 
@@ -29,10 +29,10 @@ import { UserDto } from './dtos/user.dto';
 
 @Controller('auth')
 @Serialize(UserDto) //이곳에다 놓으면 모든 컨트롤러의 핸들러에 해당 인터셉터의 dto를 적용가능하다.
-export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+export class UserController {
+  constructor(private readonly authService: UserService) {}
   @Post('/signup')
-  createUser(@Body() { email, password }: CreateuserDto) {
+  createUser(@Body() { email, password }: CreateUserDto) {
     return this.authService.create(email, password);
   }
 

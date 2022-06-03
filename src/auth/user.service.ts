@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './auth.entity';
+import { User } from './user.entity';
 
 @Injectable()
-export class AuthService {
+export class UserService {
   // User 엔티티를 담당하는 typeorm repository의 인스턴스를 생성
   // repository가 user를 담당하기 위함
   constructor(

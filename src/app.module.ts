@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { User } from './auth/auth.entity';
-import { AuthModule } from './auth/auth.module';
+import { User } from './auth/user.entity';
+import { AuthModule } from './auth/user.module';
 import { Report } from './reports/reports.entity';
 import { ReportsModule } from './reports/reports.module';
 
