@@ -40,6 +40,10 @@ export class UserController {
     return this.authService.signup(email, password);
   }
 
+  @Post('signin')
+  signin(@Body() { email, password }: CreateUserDto) {
+    return this.authService.signin(email, password);
+  }
   // 요청으로 들어온 파라미터는 모두 스트링이다.
   // 때문에 parseint로 변경해줘야한다.
   // @UseInterceptors(new SerializeInterceptor(UserDto))

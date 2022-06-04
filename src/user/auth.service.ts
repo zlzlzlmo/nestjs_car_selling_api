@@ -41,13 +41,38 @@ export class AuthService {
     // 버퍼는 주기억 장치(RAM - 비휘발성 메모리)에 있는 임시 저장 공간
     // 버퍼는 raw 바이너리  데이터를 저장할 수 있는 특수한 형태의 객체. ( raw binary란 0과 1을 의미한다.)
     // 배열이랑 굉장히 비슷한 형태 -> 차이점은 버퍼는 그 안에 raw data를 가지고 있는다.
-    const hash = (await scrypt(password, salt, 32)) as Buffer;
+    const hash = this.hash(password, salt);
 
     // . 로 구분을 둬서 왼쪽은 salt 오른쪽은 hash임을 명시
-    const result = salt + '.' + hash.toString('hex');
+    const result = salt + '.' + hash;
 
     const user = await this.userService.create(email, result);
 
     return user;
+  }
+
+  async signin(email: string, password: string) {
+    const [user] = await this.userService.find(email);
+
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다.');
+    }
+
+    const [salt, storedHash] = user.password.split('.');
+
+    // 입력된 password를 아까 만들었었던 해쉬 함수를 사용하여 만듬
+    // 해쉬는 입력된 값이 같으면 같은 해쉬로 만들어지기때문에 가능
+    const hash = await this.hash(password, salt);
+
+    if (storedHash !== hash) {
+      throw new BadRequestException('비밀번호가 틀렸습니다');
+    }
+
+    return user;
+  }
+
+  private async hash(password: string, salt: string) {
+    const result = (await scrypt(password, salt, 32)) as Buffer;
+    return result.toString('hex');
   }
 }
