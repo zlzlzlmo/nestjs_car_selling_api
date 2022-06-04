@@ -25,7 +25,7 @@ export class UserService {
     return result;
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number): Promise<User | null> {
     if (!id) {
       return null;
     }

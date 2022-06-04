@@ -15,9 +15,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 // },
 // 를 사용함으로써 전역으로 사용할 인터셉터를 지정할수있다.
 
-// 요청 -> Guard -> Controller -> Handler -> Response
-// 위 flow는 요청 들어오자마자 바로 가드를 타는것 (모든 컨트롤러에 적용)
-// 하지만 Guard는 개별적인 컨트롤러에만 적용시킬수있고, handler에만 적용시킬수있고 유연하게 원하는 곳에 옮겨서 사용할수있다.
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   providers: [
