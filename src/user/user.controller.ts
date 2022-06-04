@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   Session,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
@@ -19,6 +20,7 @@ import { AuthService } from './auth.service';
 import { CurrentUser } from './decorator/current-user.decorator';
 import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
 import { User } from './user.entity';
+import { AuthGuard } from 'src/guard/auth.guard';
 
 // DTO는 인커밍 요청도 처리가 되지만 아웃고잉 리스폰스도 인터셉트해서 처리가 가능하다.
 
@@ -42,6 +44,8 @@ export class UserController {
     private readonly authService: AuthService,
   ) {}
 
+  // Guard를 사용해서 false이면 forbidden에러를 내뱉어 접근을 방지할수있따.
+  @UseGuards(AuthGuard)
   @Get('whoAmI')
   async whoAmI(@CurrentUser() user: User) {
     return user;
