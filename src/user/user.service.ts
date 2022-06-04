@@ -39,10 +39,6 @@ export class UserService {
     // findBy는 존재하지 않을시 빈배열로 들어옴
     const result = await this.repo.findBy({ email });
 
-    if (result.length < 1) {
-      throw new NotFoundException();
-    }
-
     return result;
   }
 

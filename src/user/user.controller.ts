@@ -13,6 +13,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user-dto';
 import { UserDto } from './dtos/user.dto';
+import { AuthService } from './auth.service';
 
 // DTO는 인커밍 요청도 처리가 되지만 아웃고잉 리스폰스도 인터셉트해서 처리가 가능하다.
 
@@ -30,10 +31,13 @@ import { UserDto } from './dtos/user.dto';
 @Controller('auth')
 @Serialize(UserDto) //이곳에다 놓으면 모든 컨트롤러의 핸들러에 해당 인터셉터의 dto를 적용가능하다.
 export class UserController {
-  constructor(private readonly authService: UserService) {}
-  @Post('/signup')
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
+  @Post('signup')
   createUser(@Body() { email, password }: CreateUserDto) {
-    return this.authService.create(email, password);
+    return this.authService.signup(email, password);
   }
 
   // 요청으로 들어온 파라미터는 모두 스트링이다.
@@ -44,21 +48,21 @@ export class UserController {
   @Get(':id')
   findUser(@Param('id') id: string) {
     // console.log('핸들러 작동중');
-    return this.authService.findOne(parseInt(id));
+    return this.userService.findOne(parseInt(id));
   }
 
   @Get()
   findAllUsers(@Query('email') email: string) {
-    return this.authService.find(email);
+    return this.userService.find(email);
   }
 
   @Patch(':id')
   updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    return this.authService.update(parseInt(id), body);
+    return this.userService.update(parseInt(id), body);
   }
 
   @Delete(':id')
   removeUser(@Param('id') id: string) {
-    return this.authService.remove(parseInt(id));
+    return this.userService.remove(parseInt(id));
   }
 }
