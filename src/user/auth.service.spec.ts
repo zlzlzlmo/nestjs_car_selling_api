@@ -59,13 +59,15 @@ describe('AuthService', () => {
 
   // throw 에러 처리
   test('이미 존재하는 계정이 있다면 에러 출력', async () => {
-    fakeUserService.find = () =>
-      Promise.resolve([
-        { id: 1, email: 'zlzlzlmo@daum.net', password: 'test' } as User,
-      ]);
+    // fakeUserService.find = () =>
+    //   Promise.resolve([
+    //     { id: 1, email: 'zlzlzlmo@daum.net', password: 'test' } as User,
+    //   ]);
 
+    await service.signup('zlzlzlmo@daum.net', 'test');
     try {
-      await service.signup('zlzlzlmo@daum.net', 'test');
+      const user = await service.signup('zlzlzlmo@daum.net', 'test');
+      expect(user).toBeUndefined();
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequestException);
       expect(error.message).toEqual('이미 존재하는 이메일입니다.');
@@ -74,7 +76,8 @@ describe('AuthService', () => {
 
   test('유저가 없다면 에러 출력', async () => {
     try {
-      await service.signin('zlzlzlmo@daum.net', 'test');
+      const user = await service.signin('zlzlzlmo@daum.net', 'test');
+      expect(user).toBeUndefined();
     } catch (error) {
       expect(error).toBeInstanceOf(NotFoundException);
       expect(error.message).toEqual('유저가 존재하지 않습니다.');
@@ -82,16 +85,19 @@ describe('AuthService', () => {
   });
 
   test('비밀번호가 틀리다면 틀리다는 에러메시지 출력', async () => {
-    fakeUserService.find = () =>
-      Promise.resolve([
-        {
-          id: 1,
-          email: 'zlzlzlmo@daum.net',
-          password: 'testPassword',
-        } as User,
-      ]);
+    // fakeUserService.find = () =>
+    //   Promise.resolve([
+    //     {
+    //       id: 1,
+    //       email: 'zlzlzlmo@daum.net',
+    //       password: 'testPassword',
+    //     } as User,
+    //   ]);
+
+    await service.signup('zlzlzlmo@daum.net', 'dafsazzz');
     try {
-      await service.signin('zlzlzlmo@daum.net', 'testPassword');
+      const user = await service.signin('zlzlzlmo@daum.net', 'testPassword');
+      expect(user).toBeUndefined();
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequestException);
       expect(error.message).toEqual('비밀번호가 틀렸습니다');

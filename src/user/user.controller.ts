@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -10,7 +11,6 @@ import {
   Session,
   UseGuards,
 } from '@nestjs/common';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user-dto';
@@ -18,7 +18,8 @@ import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorator/current-user.decorator';
 import { User } from './user.entity';
-import { AuthGuard } from 'src/guard/auth.guard';
+import { AuthGuard } from '../guard/auth.guard';
+import { Serialize } from '../interceptors/serialize.interceptor';
 
 // DTO는 인커밍 요청도 처리가 되지만 아웃고잉 리스폰스도 인터셉트해서 처리가 가능하다.
 
@@ -86,7 +87,11 @@ export class UserController {
   @Get(':id')
   findUser(@Param('id') id: string) {
     // console.log('핸들러 작동중');
-    return this.userService.findOne(parseInt(id));
+    const user = this.userService.findOne(parseInt(id));
+    if (user === null) {
+      throw new NotFoundException('유저가 없습니다.');
+    }
+    return user;
   }
 
   @Get()
