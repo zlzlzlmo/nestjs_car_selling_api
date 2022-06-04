@@ -10,10 +10,21 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     // Partail을 사용하여 필요한 메서드들을 스트릭하게 설정하자
+    const users: User[] = [];
     fakeUserService = {
-      find: () => Promise.resolve([]),
-      create: (email: string, password: string) =>
-        Promise.resolve({ id: 1, email, password } as User),
+      find: (email: string) => {
+        const filteredUsers = users.filter((user) => user.email === email);
+        return Promise.resolve(filteredUsers);
+      },
+      create: (email: string, password: string) => {
+        const user = {
+          id: Math.floor(Math.random() * 99999),
+          email,
+          password,
+        } as User;
+        users.push(user);
+        return Promise.resolve(user);
+      },
     };
 
     // 직접적으로 UserService에 요청하여 거기에 있는 메서드를 사용하는 과정이 없는 것이다.
@@ -89,15 +100,18 @@ describe('AuthService', () => {
 
   // 암호화된 케이스를 테스트했을때는 signup을 했을때 나오는 암호화된 해시값을 복사하여 테스트 케이스에 넣어서 테스트를 진행한다.
   test('존재하는 유저 입력시 올바르게 로그인', async () => {
-    fakeUserService.find = () =>
-      Promise.resolve([
-        {
-          id: 1,
-          email: 'zlzlzlmo@daum.net',
-          password:
-            'dae037ca04956480.21c26488bed97733380bb28246cf1a3fc81e321d20bc8eed8511125b0bbcb694',
-        } as User,
-      ]);
+    // fakeUserService.find = () =>
+    //   Promise.resolve([
+    //     {
+    //       id: 1,
+    //       email: 'zlzlzlmo@daum.net',
+    //       password:
+    //         'dae037ca04956480.21c26488bed97733380bb28246cf1a3fc81e321d20bc8eed8511125b0bbcb694',
+    //     } as User,
+    //   ]);
+
+    // 위에있는 mock 함수 정의에서 signup (create mock function이 작동됨 )을 하면 user배열에 푸쉬하고 signin을 했을때 그 안에있는 user의 패스워드와 비교를 한다.
+    await service.signup('zlzlzlmo@daum.net', 'testPassword');
     const user = await service.signin('zlzlzlmo@daum.net', 'testPassword');
     expect(user).toBeDefined();
   });
