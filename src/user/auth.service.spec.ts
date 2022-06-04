@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { User } from './user.entity';
@@ -59,5 +59,46 @@ describe('AuthService', () => {
       expect(error).toBeInstanceOf(BadRequestException);
       expect(error.message).toEqual('이미 존재하는 이메일입니다.');
     }
+  });
+
+  test('유저가 없다면 에러 출력', async () => {
+    try {
+      await service.signin('zlzlzlmo@daum.net', 'test');
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+      expect(error.message).toEqual('유저가 존재하지 않습니다.');
+    }
+  });
+
+  test('비밀번호가 틀리다면 틀리다는 에러메시지 출력', async () => {
+    fakeUserService.find = () =>
+      Promise.resolve([
+        {
+          id: 1,
+          email: 'zlzlzlmo@daum.net',
+          password: 'testPassword',
+        } as User,
+      ]);
+    try {
+      await service.signin('zlzlzlmo@daum.net', 'testPassword');
+    } catch (error) {
+      expect(error).toBeInstanceOf(BadRequestException);
+      expect(error.message).toEqual('비밀번호가 틀렸습니다');
+    }
+  });
+
+  // 암호화된 케이스를 테스트했을때는 signup을 했을때 나오는 암호화된 해시값을 복사하여 테스트 케이스에 넣어서 테스트를 진행한다.
+  test('존재하는 유저 입력시 올바르게 로그인', async () => {
+    fakeUserService.find = () =>
+      Promise.resolve([
+        {
+          id: 1,
+          email: 'zlzlzlmo@daum.net',
+          password:
+            'dae037ca04956480.21c26488bed97733380bb28246cf1a3fc81e321d20bc8eed8511125b0bbcb694',
+        } as User,
+      ]);
+    const user = await service.signin('zlzlzlmo@daum.net', 'testPassword');
+    expect(user).toBeDefined();
   });
 });
