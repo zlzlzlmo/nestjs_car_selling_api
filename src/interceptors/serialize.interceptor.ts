@@ -19,7 +19,7 @@ export function Serialize(dto: ClassConstructor) {
 }
 
 // 인터셉터는 요청이 처음 들어왔을때 (핸들러에 도달전 작동)
-// 핸들러 처리가 끝나고 응답값으로 나가기전에 작동ㄴ
+// 핸들러 처리가 끝나고 응답값으로 나가기전에 작동
 export class SerializeInterceptor implements NestInterceptor {
   constructor(private readonly dto: any) {}
   intercept(
@@ -32,10 +32,12 @@ export class SerializeInterceptor implements NestInterceptor {
 
     // next는 요청 핸들러에 참조된 종류
     // findUser를 참조하면 findUser를 나타낸다
+    // 즉 next는 핸들러임!
 
     //excludeExtraneousValues를 true로 설정해야만 dto에서 설정한 프로퍼티가 그대로 들어온다.
     // extraneous는 관계없는 이라는 뜻이다.
     // 만약 저걸 false로 할시 인스턴스의 프로퍼티가 그대로 들어온다.
+
     return next.handle().pipe(
       map((data: any) => {
         // return 을 꼭 넣어서 변환된 것을 반환해주자.

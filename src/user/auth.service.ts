@@ -13,6 +13,7 @@ import { randomBytes, scrypt as _scrypt } from 'crypto';
 // util도 nodejs 표준 라이브러리
 // callback funtion을 사용하는 메서드를 promise를 사용하는 메서드로 변환 시켜준다.
 import { promisify } from 'util';
+import { User } from './user.entity';
 
 const scrypt = promisify(_scrypt);
 
@@ -26,7 +27,7 @@ export class AuthService {
   // 즉 솔트와 해쉬를 같이 사용하면 같은 패스워드를 입력해도 다른 문자열이 생성된다.
   // 해쉬만 사용하게되면 같은 문자열을 입력했을대 완전히 똑같은 암호화된 문자열이 나오게 되고 이것은 해커로 부터 레인보우 테이블을 생성할 위험성을 안겨준다.
 
-  async signup(email: string, password: string) {
+  async signup(email: string, password: string): Promise<User> {
     const users = await this.userService.find(email);
     if (users.length) {
       throw new BadRequestException('이미 존재하는 이메일입니다.');
@@ -41,7 +42,7 @@ export class AuthService {
     // 버퍼는 주기억 장치(RAM - 비휘발성 메모리)에 있는 임시 저장 공간
     // 버퍼는 raw 바이너리  데이터를 저장할 수 있는 특수한 형태의 객체. ( raw binary란 0과 1을 의미한다.)
     // 배열이랑 굉장히 비슷한 형태 -> 차이점은 버퍼는 그 안에 raw data를 가지고 있는다.
-    const hash = this.hash(password, salt);
+    const hash = await this.hash(password, salt);
 
     // . 로 구분을 둬서 왼쪽은 salt 오른쪽은 hash임을 명시
     const result = salt + '.' + hash;
@@ -51,7 +52,7 @@ export class AuthService {
     return user;
   }
 
-  async signin(email: string, password: string) {
+  async signin(email: string, password: string): Promise<User> {
     const [user] = await this.userService.find(email);
 
     if (!user) {
@@ -71,7 +72,7 @@ export class AuthService {
     return user;
   }
 
-  private async hash(password: string, salt: string) {
+  private async hash(password: string, salt: string): Promise<string> {
     const result = (await scrypt(password, salt, 32)) as Buffer;
     return result.toString('hex');
   }
