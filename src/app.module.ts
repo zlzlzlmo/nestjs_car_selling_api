@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -6,6 +7,8 @@ import { User } from './user/user.entity';
 import { AuthModule } from './user/user.module';
 import { Report } from './reports/reports.entity';
 import { ReportsModule } from './reports/reports.module';
+import { APP_PIPE } from '@nestjs/core';
+const cookieSession = require('cookie-session');
 
 @Module({
   // type orm이 sqlite를 db.sqlite라는 파일 이름으로 root 경로에 만들어줌
@@ -13,7 +16,7 @@ import { ReportsModule } from './reports/reports.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db.sqlite',
+      database: process.env.NODE_ENV === 'test' ? 'test.sqlite' : 'db.sqlite',
       entities: [User, Report],
       synchronize: true,
     }),
@@ -21,6 +24,24 @@ import { ReportsModule } from './reports/reports.module';
     ReportsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        cookieSession({
+          keys: ['aasdas'],
+        }),
+      )
+      .forRoutes('*');
+  }
+}
