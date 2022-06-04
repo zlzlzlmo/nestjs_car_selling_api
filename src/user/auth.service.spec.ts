@@ -1,14 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let fakeUserService: Partial<UserService>;
 
   beforeEach(async () => {
     // Partail을 사용하여 필요한 메서드들을 스트릭하게 설정하자
-    const fakeUserService: Partial<UserService> = {
+    fakeUserService = {
       find: () => Promise.resolve([]),
       create: (email: string, password: string) =>
         Promise.resolve({ id: 1, email, password } as User),
@@ -42,5 +44,20 @@ describe('AuthService', () => {
     const [salt, hash] = user.password.split('.');
     expect(salt).toBeDefined();
     expect(hash).toBeDefined();
+  });
+
+  // throw 에러 처리
+  test('이미 존재하는 계정이 있다면 에러 출력', async () => {
+    fakeUserService.find = () =>
+      Promise.resolve([
+        { id: 1, email: 'zlzlzlmo@daum.net', password: 'test' } as User,
+      ]);
+
+    try {
+      await service.signup('zlzlzlmo@daum.net', 'test');
+    } catch (error) {
+      expect(error).toBeInstanceOf(BadRequestException);
+      expect(error.message).toEqual('이미 존재하는 이메일입니다.');
+    }
   });
 });

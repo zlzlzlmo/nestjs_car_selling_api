@@ -9,7 +9,6 @@ import {
   Query,
   Session,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { UserService } from './user.service';
@@ -18,7 +17,6 @@ import { UpdateUserDto } from './dtos/update-user-dto';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorator/current-user.decorator';
-import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
 import { User } from './user.entity';
 import { AuthGuard } from 'src/guard/auth.guard';
 
