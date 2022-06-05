@@ -22,7 +22,7 @@ describe('Authentication System (e2e)', () => {
   // 하지만 e2e 테스트에서는 main.ts가 작동을 하는것이아니라서 쿠키세션과 validation pipe와 같은 미들웨어도 작동하지 않는다
   // 때문에 500에러가 발생한다.
   it('signup 요청 핸들러', () => {
-    const email = 'zlzlzadsasdasdaslmo@daum.net';
+    const email = 'z111lzlzadsasdaaaaaasdaslmo@daum.net';
     return request(app.getHttpServer())
       .post('/auth/signup')
       .send({ email, password: 'test' })
