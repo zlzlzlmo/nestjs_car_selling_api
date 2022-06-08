@@ -24,6 +24,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ default: true })
+  admin: boolean;
+
   // 앱이 처음 구동될때는 해당 클래스를 참조를 못한다.
   // 때문에 콜백으로 해당 클래스를 반환하는 식으로 하는것이다. circular dependency
   @OneToMany(() => Report, (report) => report.user)

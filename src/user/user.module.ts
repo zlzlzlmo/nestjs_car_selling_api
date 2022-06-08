@@ -1,11 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { AuthService } from './auth.service';
-import { CurrentUserInterceptor } from './interceptors/current-user.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
 
 // DI를 위해서 providers에 주입할 클래스를 넣어줘야한다.
 
@@ -17,14 +16,14 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
-  providers: [
-    UserService,
-    AuthService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CurrentUserInterceptor,
-    },
-  ],
+  providers: [UserService, AuthService],
   controllers: [UserController],
 })
-export class AuthModule {}
+
+// 인터셉터 로직을 지우고 미들웨어로 대체
+// 쿠키세션 미들웨어 작동 후 작동
+export class UserModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CurrentUserMiddleware).forRoutes('*');
+  }
+}

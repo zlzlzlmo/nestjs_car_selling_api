@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './user/user.entity';
-import { AuthModule } from './user/user.module';
+import { UserModule } from './user/user.module';
 import { Report } from './reports/report.entity';
 import { ReportsModule } from './reports/reports.module';
 import { APP_PIPE } from '@nestjs/core';
@@ -30,7 +30,7 @@ const cookieSession = require('cookie-session');
         };
       },
     }),
-    AuthModule,
+    UserModule,
     ReportsModule,
     // TypeOrmModule.forRoot({
     //   type: 'sqlite',
@@ -50,6 +50,8 @@ const cookieSession = require('cookie-session');
     },
   ],
 })
+
+// 미들웨어 등록
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer

@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { AdminGuard } from 'guard/admin.guard';
 import { AuthGuard } from 'guard/auth.guard';
 import { Serialize } from 'interceptors/serialize.interceptor';
 import { CurrentUser } from 'user/decorator/current-user.decorator';
@@ -15,6 +16,9 @@ import { ApproveReportDto } from './dtos/approve-report.dto';
 import { CreateReportDto } from './dtos/create-report.dto';
 import { ReportDto } from './dtos/report.dto';
 import { ReportsService } from './reports.service';
+
+// Authentication -> 누가 요청했는지 아는것 (인터셉터하여 누가 요청했는지 알아내는 등 같은것, 여기 프로젝트에서는 요청에 userId 세션이 있으면 service에서 find하여 currentUser 헤더에 넣어서 관리한다.)
+// Authorization -> 요청한사람이 권한이 있는지 알아내는것
 
 @Controller('reports')
 export class ReportsController {
@@ -28,6 +32,7 @@ export class ReportsController {
   }
 
   @Patch('/:id')
+  @UseGuards(AdminGuard)
   approveReport(@Param('id') id: string, @Body() body: ApproveReportDto) {
     return this.reportsService.changeApproval(parseInt(id), body);
   }
