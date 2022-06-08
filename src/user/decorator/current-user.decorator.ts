@@ -13,7 +13,6 @@ export const CurrentUser = createParamDecorator(
     // .switchToHttp().getRequest() 을 사용하여 클라이언트 요청을 get할수잇다.
 
     const request = context.switchToHttp().getRequest();
-    console.log(request);
 
     // currentUserInterceptor에서 등록한 request 정보에 currentUser를 넣어서 return 이 가능한거다.
     // interceptors 폴더에 currentUserInterceptor 인터셉터 클래스를 만들고 거기서 로직을 처리한다.
