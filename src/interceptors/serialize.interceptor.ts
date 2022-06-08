@@ -14,6 +14,7 @@ interface ClassConstructor {
   new (...args: any): {};
 }
 
+// 응답 DTO 할때 사용~~~!!!!
 export function Serialize(dto: ClassConstructor) {
   return UseInterceptors(new SerializeInterceptor(dto));
 }
