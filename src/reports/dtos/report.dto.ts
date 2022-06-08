@@ -28,6 +28,9 @@ export class ReportDto {
   @Expose()
   userId: number;
 
+  @Expose()
+  approved: boolean;
+
   //   @Expose()
   //   userId() {
   //     return this.user.id;
