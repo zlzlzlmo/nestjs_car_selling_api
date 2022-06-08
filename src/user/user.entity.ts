@@ -1,4 +1,5 @@
 // import { Exclude } from 'class-transformer';
+import { Report } from 'reports/report.entity';
 import {
   Entity,
   Column,
@@ -6,6 +7,7 @@ import {
   AfterInsert,
   AfterUpdate,
   AfterRemove,
+  OneToMany,
 } from 'typeorm';
 // 엔티티를 만들면 프로퍼티를 정의한다
 // 그리고 해당 모듈에 연결 시켜준다  (repository를 생성해주는거)
@@ -21,6 +23,9 @@ export class User {
   // @Exclude()
   @Column()
   password: string;
+
+  @OneToMany(() => Report, (report) => report.user)
+  reports: Report[];
 
   // 업데이트 되거나 리무브 됐을때 작동하는 데코레이터 (훅 데코레이터)
   @AfterInsert()

@@ -5,7 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './user/user.entity';
 import { AuthModule } from './user/user.module';
-import { Report } from './reports/reports.entity';
+import { Report } from './reports/report.entity';
 import { ReportsModule } from './reports/reports.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
