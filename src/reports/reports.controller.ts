@@ -28,7 +28,10 @@ export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Get()
-  getEstimate(@Query() query: GetEstimateDto) {}
+  getEstimate(@Query() query: GetEstimateDto) {
+    // dto에서 지정한 값들이 들어옴
+    console.log(query);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
