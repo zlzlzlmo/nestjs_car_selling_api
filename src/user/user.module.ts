@@ -22,6 +22,7 @@ import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
 
 // 인터셉터 로직을 지우고 미들웨어로 대체
 // 쿠키세션 미들웨어 작동 후 작동
+// 나중에 jwt 검증도 여기서 하면 될듯?
 export class UserModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(CurrentUserMiddleware).forRoutes('*');
